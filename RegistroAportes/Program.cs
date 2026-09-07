@@ -1,346 +1,152 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
-// =====================================================================
-//  GUÍA DE PRÁCTICAS #01 - Estructura de Datos
-//  Universidad Estatal Amazónica
-//  Sistema: Registro de Aportes de Integrantes de una Asociación
-//  Lenguaje: C#  |  Paradigma: Programación Orientada a Objetos
-//  Estructuras usadas: struct, array (vector), List<T> (arreglo dinámico)
-// =====================================================================
-
-namespace RegistroAportes
+namespace PremiacionDeportistas
 {
-    // ------------------------------------------------------------------
-    // STRUCT: representa un aporte individual (registro de dato compuesto)
-    // ------------------------------------------------------------------
-    struct Aporte
+    // Clase que representa a un deportista participante
+    class Deportista
     {
-        public int    Id;
-        public string Concepto;
-        public double Monto;
-        public string Fecha;       // formato DD/MM/YYYY
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public string Disciplina { get; set; }
+        public string PaisOEquipo { get; set; }
+        public double Puntos { get; set; }
 
-        public Aporte(int id, string concepto, double monto, string fecha)
+        public Deportista(int id, string nombre, string disciplina, string pais, double puntos)
         {
-            Id       = id;
-            Concepto = concepto;
-            Monto    = monto;
-            Fecha    = fecha;
+            Id = id;
+            Nombre = nombre;
+            Disciplina = disciplina;
+            PaisOEquipo = pais;
+            Puntos = puntos;
         }
 
         public override string ToString()
         {
-            return $"  [{Id:D3}] {Concepto,-25} ${Monto,8:F2}   {Fecha}";
+            return $"[{Id}] {Nombre} - {Disciplina} - {PaisOEquipo} - {Puntos:0.0} pts";
         }
     }
 
-    // ------------------------------------------------------------------
-    // CLASE: Empleado  (encapsula datos y comportamientos del empleado)
-    // ------------------------------------------------------------------
-    class Empleado
-    {
-        // --- Atributos ---
-        public int    Id       { get; private set; }
-        public string Nombre   { get; private set; }
-        public string Cedula   { get; private set; }
-        public string Cargo    { get; private set; }
-
-        // Vector (List<T>) de aportes del empleado
-        private List<Aporte> _aportes;
-
-        // --- Constructor ---
-        public Empleado(int id, string nombre, string cedula, string cargo)
-        {
-            Id      = id;
-            Nombre  = nombre;
-            Cedula  = cedula;
-            Cargo   = cargo;
-            _aportes = new List<Aporte>();
-        }
-
-        // --- Métodos ---
-
-        /// <summary>Agrega un aporte al vector del empleado.</summary>
-        public void AgregarAporte(string concepto, double monto, string fecha)
-        {
-            int nuevoId = _aportes.Count + 1;
-            _aportes.Add(new Aporte(nuevoId, concepto, monto, fecha));
-            Console.WriteLine($"\n  ✔ Aporte registrado exitosamente para {Nombre}.");
-        }
-
-        /// <summary>Devuelve la suma total de aportes.</summary>
-        public double TotalAportes()
-        {
-            double total = 0;
-            foreach (Aporte a in _aportes)
-                total += a.Monto;
-            return total;
-        }
-
-        /// <summary>Muestra todos los aportes del empleado.</summary>
-        public void MostrarAportes()
-        {
-            if (_aportes.Count == 0)
-            {
-                Console.WriteLine("  (Sin aportes registrados)");
-                return;
-            }
-            Console.WriteLine($"  {"ID",-6} {"Concepto",-25} {"Monto",9}   {"Fecha"}");
-            Console.WriteLine("  " + new string('-', 55));
-            foreach (Aporte a in _aportes)
-                Console.WriteLine(a.ToString());
-            Console.WriteLine("  " + new string('-', 55));
-            Console.WriteLine($"  {"TOTAL",-32} ${TotalAportes(),8:F2}");
-        }
-
-        /// <summary>Busca un aporte por concepto (búsqueda lineal).</summary>
-        public void BuscarAporte(string concepto)
-        {
-            bool encontrado = false;
-            foreach (Aporte a in _aportes)
-            {
-                if (a.Concepto.ToLower().Contains(concepto.ToLower()))
-                {
-                    Console.WriteLine(a.ToString());
-                    encontrado = true;
-                }
-            }
-            if (!encontrado)
-                Console.WriteLine($"  No se encontró ningún aporte con el concepto '{concepto}'.");
-        }
-
-        public override string ToString()
-        {
-            return $"  [{Id:D3}] {Nombre,-25} CI: {Cedula,-12} Cargo: {Cargo,-20} Aportes: {_aportes.Count,3}   Total: ${TotalAportes():F2}";
-        }
-    }
-
-    // ------------------------------------------------------------------
-    // CLASE: Asociacion  (gestiona el vector de empleados)
-    // ------------------------------------------------------------------
-    class Asociacion
-    {
-        private string      _nombre;
-        private List<Empleado> _empleados;   // vector dinámico de empleados
-
-        public Asociacion(string nombre)
-        {
-            _nombre    = nombre;
-            _empleados = new List<Empleado>();
-        }
-
-        // ---- Registro de empleados ----
-
-        public void RegistrarEmpleado(string nombre, string cedula, string cargo)
-        {
-            // Verificar cédula duplicada
-            foreach (Empleado e in _empleados)
-            {
-                if (e.Cedula == cedula)
-                {
-                    Console.WriteLine($"\n  ⚠ Ya existe un empleado con la cédula {cedula}.");
-                    return;
-                }
-            }
-            int id = _empleados.Count + 1;
-            _empleados.Add(new Empleado(id, nombre, cedula, cargo));
-            Console.WriteLine($"\n  ✔ Empleado '{nombre}' registrado con ID {id:D3}.");
-        }
-
-        // ---- Búsqueda de empleado por ID ----
-
-        private Empleado BuscarEmpleadoPorId(int id)
-        {
-            foreach (Empleado e in _empleados)
-                if (e.Id == id) return e;
-            return null;
-        }
-
-        // ---- Registro de aporte ----
-
-        public void RegistrarAporte(int idEmpleado, string concepto, double monto, string fecha)
-        {
-            Empleado emp = BuscarEmpleadoPorId(idEmpleado);
-            if (emp == null)
-            {
-                Console.WriteLine($"\n  ⚠ No existe un empleado con ID {idEmpleado:D3}.");
-                return;
-            }
-            emp.AgregarAporte(concepto, monto, fecha);
-        }
-
-        // ---- Reportes ----
-
-        public void ListarEmpleados()
-        {
-            Console.WriteLine($"\n  === LISTADO DE EMPLEADOS — {_nombre} ===");
-            if (_empleados.Count == 0)
-            {
-                Console.WriteLine("  (No hay empleados registrados)");
-                return;
-            }
-            Console.WriteLine($"  {"ID",-6} {"Nombre",-25} {"Cédula",-14} {"Cargo",-22} {"Aportes",8}   {"Total"}");
-            Console.WriteLine("  " + new string('-', 85));
-            foreach (Empleado e in _empleados)
-                Console.WriteLine(e.ToString());
-        }
-
-        public void MostrarAportesEmpleado(int idEmpleado)
-        {
-            Empleado emp = BuscarEmpleadoPorId(idEmpleado);
-            if (emp == null)
-            {
-                Console.WriteLine($"\n  ⚠ No existe un empleado con ID {idEmpleado:D3}.");
-                return;
-            }
-            Console.WriteLine($"\n  === APORTES DE: {emp.Nombre} (CI: {emp.Cedula}) ===");
-            emp.MostrarAportes();
-        }
-
-        public void ReporteGeneral()
-        {
-            Console.WriteLine($"\n  === REPORTE GENERAL DE APORTES — {_nombre} ===");
-            double granTotal = 0;
-            foreach (Empleado e in _empleados)
-            {
-                Console.WriteLine($"\n  Empleado: {e.Nombre} (ID {e.Id:D3})");
-                e.MostrarAportes();
-                granTotal += e.TotalAportes();
-            }
-            Console.WriteLine($"\n  {'=',5} GRAN TOTAL DE APORTES: ${granTotal:F2} {'=',5}");
-        }
-
-        public void BuscarAporteEmpleado(int idEmpleado, string concepto)
-        {
-            Empleado emp = BuscarEmpleadoPorId(idEmpleado);
-            if (emp == null) { Console.WriteLine($"\n  ⚠ No existe empleado con ID {idEmpleado:D3}."); return; }
-            Console.WriteLine($"\n  === Búsqueda '{concepto}' en aportes de {emp.Nombre} ===");
-            emp.BuscarAporte(concepto);
-        }
-
-        // ---- Reporte: matriz de aportes por empleado (mes x empleado) ----
-        // Muestra cuántos aportes registró cada empleado (estructura tipo matriz)
-        public void MatrizResumen()
-        {
-            Console.WriteLine($"\n  === MATRIZ RESUMEN (Empleado vs Total $) ===");
-            Console.WriteLine($"  {"#",-4} {"Nombre",-25} {"Total Aportes ($)",18}");
-            Console.WriteLine("  " + new string('-', 50));
-            foreach (Empleado e in _empleados)
-                Console.WriteLine($"  {e.Id,-4} {e.Nombre,-25} {e.TotalAportes(),18:F2}");
-        }
-    }
-
-    // ------------------------------------------------------------------
-    // CLASE: Program  (menú principal e interacción con el usuario)
-    // ------------------------------------------------------------------
     class Program
     {
-        static Asociacion asociacion = new Asociacion("Asociación de Empleados UEA");
+        // 1) CONJUNTO (HashSet<T>): garantiza disciplinas únicas, sin duplicados.
+        static HashSet<string> conjuntoDisciplinas = new HashSet<string>();
+
+        // 2) MAPA (Dictionary<TKey, TValue>): asocia cada Id único al deportista -> acceso O(1).
+        static Dictionary<int, Deportista> mapaDeportistas = new Dictionary<int, Deportista>();
+
+        // 3) DICCIONARIO agrupador (Dictionary<string, List<Deportista>>): agrupa deportistas por disciplina
+        //    para poder generar el medallero (reportería) de cada disciplina.
+        static Dictionary<string, List<Deportista>> diccionarioPorDisciplina =
+            new Dictionary<string, List<Deportista>>();
 
         static void Main(string[] args)
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
-            CargarDatosDemostracion();   // datos de ejemplo
-            MenuPrincipal();
-        }
+            Console.WriteLine("=== SISTEMA DE PREMIACIÓN DE DEPORTISTAS DE VARIAS DISCIPLINAS ===\n");
 
-        // ---- Menú principal ----
-        static void MenuPrincipal()
-        {
-            bool salir = false;
-            while (!salir)
+            // --------- Datos de prueba (registro de deportistas) ---------
+            var datos = new List<Deportista>
             {
-                Console.WriteLine("\n╔══════════════════════════════════════════╗");
-                Console.WriteLine("║  SISTEMA DE REGISTRO DE APORTES          ║");
-                Console.WriteLine("║  Asociación de Empleados UEA             ║");
-                Console.WriteLine("╠══════════════════════════════════════════╣");
-                Console.WriteLine("║  1. Registrar empleado                   ║");
-                Console.WriteLine("║  2. Registrar aporte                     ║");
-                Console.WriteLine("║  3. Listar empleados                     ║");
-                Console.WriteLine("║  4. Ver aportes de un empleado           ║");
-                Console.WriteLine("║  5. Reporte general                      ║");
-                Console.WriteLine("║  6. Buscar aporte por concepto           ║");
-                Console.WriteLine("║  7. Matriz resumen                       ║");
-                Console.WriteLine("║  0. Salir                                ║");
-                Console.WriteLine("╚══════════════════════════════════════════╝");
-                Console.Write("  Seleccione una opción: ");
-                string op = Console.ReadLine();
+                new Deportista(1,  "Ana Torres",    "Atletismo", "Ecuador",  95),
+                new Deportista(2,  "Carlos Pérez",  "Atletismo", "Colombia", 88),
+                new Deportista(3,  "Lucía Gómez",   "Atletismo", "Ecuador",  92),
+                new Deportista(4,  "Pedro Ruiz",    "Natación",  "Perú",     90),
+                new Deportista(5,  "María Salas",   "Natación",  "Ecuador",  85),
+                new Deportista(6,  "Jorge León",    "Natación",  "Chile",    93),
+                new Deportista(7,  "Daniela Vera",  "Ciclismo",  "Ecuador",  78),
+                new Deportista(8,  "Andrés Mora",   "Ciclismo",  "Colombia", 82),
+                new Deportista(9,  "Paula Ríos",    "Ciclismo",  "Perú",     80),
+                new Deportista(10, "Sofía Cedeño",  "Gimnasia",  "Ecuador",  97),
+                new Deportista(11, "Iván Castro",   "Gimnasia",  "Chile",    91),
+                new Deportista(12, "Karen Ortiz",   "Gimnasia",  "Ecuador",  89),
+            };
 
-                switch (op)
+            // --------- Medición de tiempo de ejecución: registro / inserción ---------
+            Stopwatch cronometro = Stopwatch.StartNew();
+
+            foreach (var d in datos)
+            {
+                RegistrarDeportista(d);
+            }
+
+            cronometro.Stop();
+            double tiempoRegistro = cronometro.Elapsed.TotalMilliseconds;
+
+            // --------- Reportería 1: disciplinas registradas (desde el CONJUNTO) ---------
+            Console.WriteLine("--- Disciplinas registradas (Conjunto - HashSet<string>) ---");
+            foreach (var disciplina in conjuntoDisciplinas.OrderBy(d => d))
+            {
+                Console.WriteLine($" - {disciplina}");
+            }
+
+            // --------- Reportería 2: listado general de deportistas (desde el MAPA) ---------
+            Console.WriteLine("\n--- Listado general de deportistas (Mapa - Dictionary<int, Deportista>) ---");
+            foreach (var id in mapaDeportistas.Keys.OrderBy(k => k))
+            {
+                Console.WriteLine(" " + mapaDeportistas[id]);
+            }
+
+            // --------- Reportería 3: medallero por disciplina (DICCIONARIO agrupador) ---------
+            Console.WriteLine("\n--- Medallero por disciplina (Diccionario<string, List<Deportista>>) ---");
+            foreach (var disciplina in diccionarioPorDisciplina.Keys.OrderBy(d => d))
+            {
+                Console.WriteLine($"\nDisciplina: {disciplina}");
+                var top3 = diccionarioPorDisciplina[disciplina]
+                            .OrderByDescending(x => x.Puntos)
+                            .Take(3)
+                            .ToList();
+
+                string[] medallas = { "🥇 Oro   ", "🥈 Plata ", "🥉 Bronce" };
+                for (int i = 0; i < top3.Count; i++)
                 {
-                    case "1": OpRegistrarEmpleado();         break;
-                    case "2": OpRegistrarAporte();           break;
-                    case "3": asociacion.ListarEmpleados();  break;
-                    case "4": OpVerAportes();                break;
-                    case "5": asociacion.ReporteGeneral();   break;
-                    case "6": OpBuscarAporte();              break;
-                    case "7": asociacion.MatrizResumen();    break;
-                    case "0": salir = true; Console.WriteLine("\n  Hasta pronto.\n"); break;
-                    default:  Console.WriteLine("\n  ⚠ Opción inválida."); break;
+                    Console.WriteLine($"   {medallas[i]}: {top3[i].Nombre} ({top3[i].PaisOEquipo}) - {top3[i].Puntos:0.0} pts");
                 }
             }
-        }
 
-        // ---- Opciones ----
+            // --------- Búsqueda puntual por Id (demuestra acceso O(1) en el Mapa) ---------
+            Console.WriteLine("\n--- Búsqueda puntual por Id (Mapa) ---");
+            cronometro.Restart();
+            bool encontrado = mapaDeportistas.TryGetValue(5, out Deportista buscado);
+            cronometro.Stop();
+            double tiempoBusqueda = cronometro.Elapsed.TotalMilliseconds;
 
-        static void OpRegistrarEmpleado()
-        {
-            Console.WriteLine("\n  -- Registrar nuevo empleado --");
-            Console.Write("  Nombre completo : "); string nombre = Console.ReadLine();
-            Console.Write("  Cédula          : "); string cedula = Console.ReadLine();
-            Console.Write("  Cargo           : "); string cargo  = Console.ReadLine();
-            asociacion.RegistrarEmpleado(nombre, cedula, cargo);
-        }
-
-        static void OpRegistrarAporte()
-        {
-            Console.WriteLine("\n  -- Registrar aporte --");
-            asociacion.ListarEmpleados();
-            Console.Write("\n  ID del empleado : "); 
-            if (!int.TryParse(Console.ReadLine(), out int id)) { Console.WriteLine("  ⚠ ID inválido."); return; }
-            Console.Write("  Concepto        : "); string concepto = Console.ReadLine();
-            Console.Write("  Monto ($)       : "); 
-            if (!double.TryParse(Console.ReadLine(), out double monto)) { Console.WriteLine("  ⚠ Monto inválido."); return; }
-            Console.Write("  Fecha (DD/MM/YYYY): "); string fecha = Console.ReadLine();
-            asociacion.RegistrarAporte(id, concepto, monto, fecha);
-        }
-
-        static void OpVerAportes()
-        {
-            Console.Write("\n  ID del empleado : ");
-            if (int.TryParse(Console.ReadLine(), out int id))
-                asociacion.MostrarAportesEmpleado(id);
+            if (encontrado)
+                Console.WriteLine($"Id 5 encontrado -> {buscado}");
             else
-                Console.WriteLine("  ⚠ ID inválido.");
+                Console.WriteLine("Id 5 no encontrado.");
+
+            // Búsqueda de un Id inexistente para mostrar el otro caso
+            bool existeId99 = mapaDeportistas.ContainsKey(99);
+            Console.WriteLine($"¿Existe el Id 99? {(existeId99 ? "Sí" : "No")}");
+
+            // --------- Análisis de tiempos de ejecución ---------
+            Console.WriteLine("\n--- Análisis de tiempo de ejecución ---");
+            Console.WriteLine($"Tiempo de registro de {datos.Count} deportistas: {tiempoRegistro:0.0000} ms");
+            Console.WriteLine($"Tiempo de búsqueda por Id (Dictionary, O(1) promedio): {tiempoBusqueda:0.0000} ms");
+            Console.WriteLine("\nNota: los tiempos exactos varían según el equipo donde se ejecute el programa;");
+            Console.WriteLine("lo relevante es el orden de magnitud y la complejidad algorítmica de cada operación.");
+
+            Console.WriteLine("\n=== FIN DE LA EJECUCIÓN ===");
         }
 
-        static void OpBuscarAporte()
+        // Registra un deportista en las tres estructuras de datos
+        static void RegistrarDeportista(Deportista d)
         {
-            Console.Write("\n  ID del empleado : ");
-            if (!int.TryParse(Console.ReadLine(), out int id)) { Console.WriteLine("  ⚠ ID inválido."); return; }
-            Console.Write("  Concepto a buscar: "); string concepto = Console.ReadLine();
-            asociacion.BuscarAporteEmpleado(id, concepto);
-        }
+            // 1) Conjunto: agrega la disciplina; si ya existe, HashSet la ignora automáticamente (sin duplicados)
+            conjuntoDisciplinas.Add(d.Disciplina);
 
-        // ---- Datos de demostración ----
-        static void CargarDatosDemostracion()
-        {
-            asociacion.RegistrarEmpleado("Ana Lucía Toapanta",  "1712345678", "Docente");
-            asociacion.RegistrarEmpleado("Carlos René Shiguango","2201234567", "Administrativo");
-            asociacion.RegistrarEmpleado("María José Grefa",    "1523456789", "Técnico de TI");
+            // 2) Mapa: asocia el Id (clave única) con el objeto Deportista completo
+            mapaDeportistas[d.Id] = d;
 
-            asociacion.RegistrarAporte(1, "Cuota mensual enero",   25.00, "05/01/2026");
-            asociacion.RegistrarAporte(1, "Cuota mensual febrero", 25.00, "04/02/2026");
-            asociacion.RegistrarAporte(1, "Aporte fondo navidad",  50.00, "10/02/2026");
-
-            asociacion.RegistrarAporte(2, "Cuota mensual enero",   25.00, "06/01/2026");
-            asociacion.RegistrarAporte(2, "Aporte evento deportivo",15.00,"15/01/2026");
-
-            asociacion.RegistrarAporte(3, "Cuota mensual enero",   25.00, "07/01/2026");
-            asociacion.RegistrarAporte(3, "Cuota mensual febrero", 25.00, "05/02/2026");
-
-            Console.Clear();
+            // 3) Diccionario agrupador: agrupa por disciplina para la reportería del medallero
+            if (!diccionarioPorDisciplina.ContainsKey(d.Disciplina))
+            {
+                diccionarioPorDisciplina[d.Disciplina] = new List<Deportista>();
+            }
+            diccionarioPorDisciplina[d.Disciplina].Add(d);
         }
     }
 }

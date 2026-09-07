@@ -1,0 +1,15 @@
+C:\Users\User\Desktop\EjercicioClases\EjercicioCShar\bin\Debug\net10.0\EjercicioCShar.exe
+C:\Users\User\Desktop\EjercicioClases\EjercicioCShar\bin\Debug\net10.0\EjercicioCShar.deps.json
+C:\Users\User\Desktop\EjercicioClases\EjercicioCShar\bin\Debug\net10.0\EjercicioCShar.runtimeconfig.json
+C:\Users\User\Desktop\EjercicioClases\EjercicioCShar\bin\Debug\net10.0\EjercicioCShar.dll
+C:\Users\User\Desktop\EjercicioClases\EjercicioCShar\bin\Debug\net10.0\EjercicioCShar.pdb
+C:\Users\User\Desktop\EjercicioClases\EjercicioCShar\obj\Debug\net10.0\EjercicioCShar.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\User\Desktop\EjercicioClases\EjercicioCShar\obj\Debug\net10.0\EjercicioCShar.AssemblyInfoInputs.cache
+C:\Users\User\Desktop\EjercicioClases\EjercicioCShar\obj\Debug\net10.0\EjercicioCShar.AssemblyInfo.cs
+C:\Users\User\Desktop\EjercicioClases\EjercicioCShar\obj\Debug\net10.0\EjercicioCShar.csproj.CoreCompileInputs.cache
+C:\Users\User\Desktop\EjercicioClases\EjercicioCShar\obj\Debug\net10.0\EjercicioCShar.sourcelink.json
+C:\Users\User\Desktop\EjercicioClases\EjercicioCShar\obj\Debug\net10.0\EjercicioCShar.dll
+C:\Users\User\Desktop\EjercicioClases\EjercicioCShar\obj\Debug\net10.0\refint\EjercicioCShar.dll
+C:\Users\User\Desktop\EjercicioClases\EjercicioCShar\obj\Debug\net10.0\EjercicioCShar.pdb
+C:\Users\User\Desktop\EjercicioClases\EjercicioCShar\obj\Debug\net10.0\EjercicioCShar.genruntimeconfig.cache
+C:\Users\User\Desktop\EjercicioClases\EjercicioCShar\obj\Debug\net10.0\ref\EjercicioCShar.dll
